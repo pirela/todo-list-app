@@ -50,6 +50,7 @@ function Home() {
       <StyledMainTitle>Todo list App - Jose Pirela</StyledMainTitle>
 
       <StyledContainer>
+
         <MyCustomButtonToOpenModal refresh={refresh} setRefresh={setRefresh} />
 
         <StyledContainerTasks>
@@ -97,6 +98,7 @@ function Home() {
             ))
           )}
         </StyledContainerTasks>
+
       </StyledContainer>
     </>
   );

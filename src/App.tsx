@@ -22,9 +22,7 @@ export default function App() {
   const element = useRoutes(routes);
 
   return (
-    <div
-      style={{ backgroundColor: "#f7f7f7", width: "100vw", height: "100vh" }}
-    >
+    <div>
       {element}
     </div>
   );
