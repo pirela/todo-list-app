@@ -1,8 +1,12 @@
 export type TypeCard = {
+  id: string;
   name: string;
   description: string;
-  date: string;
+  createdAt: string;
   status: string;
+  refresh?: boolean;
+  setRefresh?: Function;
+  handleDelete?: Function;
 };
 
 export type TypeStyledText = {

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createTask } from "../../api/public";
 import { TypeCard, TypeStyledButton } from "../../const/Types";
 import { MyCustomModalAddTask } from "../Modal/Modal";
 
@@ -12,14 +13,23 @@ export const MyCustomButton = ({ handleClick, label }: TypeStyledButton) => {
   );
 };
 
-export const MyCustomButtonToOpenModal = () => {
+export const MyCustomButtonToOpenModal = ({ refresh, setRefresh }: any) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const createNewTask = async (card: TypeCard) => {
+    const { data } = await createTask(card);
+    if (data.id) {
+      setOpenModal(false);
+      setRefresh(!refresh);
+    }
+  };
+
   return (
     <>
       <StyledContainerButton>
         <MyCustomButton
           handleClick={() => setOpenModal(true)}
-          label="Add Card"
+          label="Add Task"
         ></MyCustomButton>
       </StyledContainerButton>
 
@@ -27,8 +37,7 @@ export const MyCustomButtonToOpenModal = () => {
         open={openModal}
         handleCancel={() => setOpenModal(false)}
         handleOk={(card: TypeCard) => {
-          console.info("add new card:", card);
-          setOpenModal(false);
+          createNewTask(card);
         }}
         values={null}
       />

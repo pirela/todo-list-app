@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import dayjs from "dayjs";
+
 import {
   CheckCircleOutlineRounded,
   AccountCircleRounded,
@@ -11,9 +13,28 @@ import { StyledContainerCard, StyledText, StyledIcon } from "./styled";
 import { EnumStatus, TypeCard } from "../../const/Types";
 
 import { MyCustomModalAddTask } from "../Modal/Modal";
+import { putTask } from "../../api/public";
 
-export const MyCustomCard = ({ date, description, name, status }: TypeCard) => {
+export const MyCustomCard = ({
+  createdAt,
+  description,
+  name,
+  status,
+  id,
+  handleDelete,
+  setRefresh,
+  refresh,
+}: TypeCard) => {
   const [openModal, setOpenModal] = useState(false);
+
+  const updateTask = async (card: TypeCard) => {
+    const { data } = await putTask(card);
+    if (data[0]) {
+      setOpenModal(false);
+      setRefresh && setRefresh(!refresh);
+    }
+  };
+
   const handleClick = () => {
     setOpenModal(true);
   };
@@ -28,14 +49,14 @@ export const MyCustomCard = ({ date, description, name, status }: TypeCard) => {
         </StyledIcon>
         <StyledText
           onClick={() => handleClick()}
-          width={430}
+          width={410}
           align="left"
         >{`${name}`}</StyledText>
         <StyledText
           onClick={() => handleClick()}
-          width={80}
+          width={100}
           align="center"
-        >{`${date}`}</StyledText>
+        >{`${dayjs(createdAt).format("DD-MM-YYYY")}`}</StyledText>
         <StyledText
           onClick={() => handleClick()}
           width={100}
@@ -47,7 +68,7 @@ export const MyCustomCard = ({ date, description, name, status }: TypeCard) => {
         <StyledIcon>
           <DeleteForeverRounded
             onClick={() => {
-              console.info("remove");
+              handleDelete && handleDelete(id);
             }}
           />
         </StyledIcon>
@@ -57,10 +78,9 @@ export const MyCustomCard = ({ date, description, name, status }: TypeCard) => {
         open={openModal}
         handleCancel={() => setOpenModal(false)}
         handleOk={(card: TypeCard) => {
-          console.info("add new card:", card);
-          setOpenModal(false);
+          updateTask(card);
         }}
-        values={{ date, description, name, status }}
+        values={{ createdAt, description, name, status, id }}
       />
     </>
   );

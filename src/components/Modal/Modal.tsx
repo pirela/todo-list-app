@@ -8,6 +8,7 @@ import { TypeModal, TypeOption } from "../../const/Types";
 import { MyCustomTextField, MyCustomSelectField } from "../Fields/Fields";
 import { MyCustomButton } from "../Buttons/Buttons";
 import { optionsSelectStatus } from "../../const/functions";
+import { StyledTextError } from "./styled";
 
 const style = {
   position: "absolute" as "absolute",
@@ -27,27 +28,39 @@ export const MyCustomModalAddTask = ({
   handleOk,
   values,
 }: TypeModal) => {
+  const [id, setId] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [status, setStatus] = useState<TypeOption | null>(null);
   const [disabled, seDisabled] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
+  const validate = () => {
+    if (name && description && status) {
+      setError(false);
+      handleOk({ id, name, description, status: status?.value });
+    } else {
+      setError(true);
+    }
+  };
 
   useEffect(() => {
     if (values?.name) {
+      setId(values.id)
       setName(values.name);
       setDescription(values.description);
       setStatus({ value: values.status, label: values.status });
       seDisabled(true);
+    } else {
+      setName("");
+      setDescription("");
+      setStatus(null);
+      seDisabled(false);
     }
-  }, [values]);
+  }, [values, open]);
 
   return (
-    <Modal
-      open={open}
-      onClose={() => handleCancel()}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
+    <Modal open={open} onClose={() => handleCancel()}>
       <Box sx={style}>
         <MyCustomTextField
           disabled={disabled}
@@ -62,7 +75,6 @@ export const MyCustomModalAddTask = ({
           value={description}
         />
         <MyCustomSelectField
-          disabled={disabled}
           handleChange={(value: TypeOption) => {
             setStatus(value);
           }}
@@ -70,13 +82,14 @@ export const MyCustomModalAddTask = ({
           value={status?.label || ""}
           options={optionsSelectStatus()}
         />
-        {!values?.name && (
-          <MyCustomButton
-            handleClick={() =>
-              handleOk({ name, description, status: status?.value })
-            }
-            label={"Add new task"}
-          />
+
+        <MyCustomButton
+          handleClick={() => validate()}
+          label={values?.name ? "Update Task" : "Add new task"}
+        />
+
+        {error && (
+          <StyledTextError>{`Debe rellenar todos los campos`}</StyledTextError>
         )}
       </Box>
     </Modal>

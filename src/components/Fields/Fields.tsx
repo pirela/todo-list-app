@@ -46,7 +46,6 @@ export const MyCustomSelectField = ({
           defaultValue={value}
           onChange={(e: any) => {
             handleChange({ value: e.target.value, label: e.target.value });
-            console.info("e", e);
           }}
         >
           {(options || [])?.map((option) => (
